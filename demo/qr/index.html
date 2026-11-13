@@ -110,9 +110,9 @@ const T = {
   en:{panel:"Machine panel", panelSub:"Scan a code with your phone or click “Open” to see the page an operator would see.", open:"Open documents", ok:"Running", warn:"Maintenance due", docs:"Documents and resources", serial:"Serial no.", area:"Area", last:"Last maintenance", next:"Next maintenance", tech:"Owner", pages:"pages", pdf:"PDF", view:"Preview", notFound:"Machine not found", notFoundSub:"This QR code doesn't match any demo machine.", scan:"Scan to open on your phone", fake:"FICTIONAL DOCUMENT · DEMO ONLY"}
 };
 const root=document.documentElement, app=document.getElementById('app');
-function getL(){try{return localStorage.getItem('lang')}catch(e){return null}}
-function setL(v){try{localStorage.setItem('lang',v)}catch(e){}}
-let lang = getL() || ((navigator.language||'es').toLowerCase().startsWith('es')?'es':'en');
+function getL(){try{return localStorage.getItem('pf-lang')}catch(e){return null}}
+function setL(v){try{localStorage.setItem('pf-lang',v)}catch(e){}}
+let lang = getL()==='es'?'es':'en';
 const params=new URLSearchParams(location.search), id=params.get('id');
 const baseUrl=location.origin+location.pathname;
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}

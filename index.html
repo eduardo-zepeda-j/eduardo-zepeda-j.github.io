@@ -23,14 +23,6 @@
   --shadow:0 10px 30px -12px rgba(79,70,229,.25);
   --blob-op:.55;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0b0a1a; --bg-2:#121032; --surface:rgba(24,22,52,.66); --surface-solid:#16143a;
-    --text:#f1f0ff; --muted:#a9a6cc; --border:rgba(255,255,255,.09);
-    --grad:linear-gradient(120deg,#818cf8 0%,#a78bfa 40%,#f472b6 100%);
-    --shadow:0 10px 40px -12px rgba(0,0,0,.6); --blob-op:.35;
-  }
-}
 :root[data-theme="dark"]{
   --bg:#0b0a1a; --bg-2:#121032; --surface:rgba(24,22,52,.66); --surface-solid:#16143a;
   --text:#f1f0ff; --muted:#a9a6cc; --border:rgba(255,255,255,.09);
@@ -57,6 +49,11 @@ nav{display:flex;gap:4px;margin-left:auto}
 nav a{text-decoration:none;color:var(--muted);font-weight:600;font-size:.9rem;padding:6px 12px;border-radius:10px}
 nav a:hover{color:var(--text);background:var(--border)}
 .tools{display:flex;gap:6px}
+.lang-switch{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--border);background:var(--surface-solid);border-radius:11px;height:34px;align-items:center}
+.lang-switch button{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--muted);font:inherit;font-size:.74rem;font-weight:800;padding:0 7px;height:26px;border-radius:8px;cursor:pointer;opacity:.6;transition:background .2s,opacity .2s,color .2s}
+.lang-switch button:hover{opacity:1}
+.lang-switch button[aria-pressed="true"]{opacity:1;color:var(--text);background:var(--bg-2);box-shadow:inset 0 0 0 1px var(--border)}
+.lang-switch svg{width:20px;height:14px;border-radius:3px;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
 .btn{border:1px solid var(--border);background:var(--surface-solid);color:var(--text);border-radius:10px;height:34px;min-width:38px;padding:0 10px;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
 .btn:hover{border-color:var(--violet)}
 @media (max-width:760px){nav{display:none}.tools{margin-left:auto}}
@@ -77,7 +74,6 @@ h1{font-size:clamp(2.4rem,7vw,4.4rem);line-height:1.02;letter-spacing:-.03em;mar
 .ico{width:18px;height:18px;flex:none}
 .ico-li{color:#0A66C2} .ico-yt{color:#FF0000}
 :root[data-theme="dark"] .ico-li{color:#4c9be8}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ico-li{color:#4c9be8}}
 .photo{position:relative;justify-self:center}
 .ring{width:min(320px,70vw);aspect-ratio:1;border-radius:50%;padding:6px;background:conic-gradient(from 180deg,#4f46e5,#06b6d4,#10b981,#f59e0b,#ec4899,#7c3aed,#4f46e5);box-shadow:0 30px 60px -20px rgba(124,58,237,.55)}
 .ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:6px solid var(--bg);display:block}
@@ -166,7 +162,7 @@ html[lang="es"] [data-lang-es]{display:revert}
       <a href="#contact"><span data-lang-en>Contact</span><span data-lang-es>Contacto</span></a>
     </nav>
     <div class="tools">
-      <button class="btn" id="langBtn" type="button" aria-label="Switch language / Cambiar idioma">ES</button>
+      <div class="lang-switch" role="group" aria-label="Language / Idioma"><button type="button" data-set-lang="en" aria-pressed="true" title="English"><svg viewBox="0 0 19 10" aria-hidden="true" preserveAspectRatio="none"><rect width="19" height="10" fill="#B22234"/><path d="M0 1.15h19M0 2.69h19M0 4.23h19M0 5.77h19M0 7.31h19M0 8.85h19" stroke="#fff" stroke-width=".77"/><rect width="7.6" height="5.38" fill="#3C3B6E"/><g fill="#fff"><circle cx="1.1" cy="1" r=".28"/><circle cx="2.6" cy="1" r=".28"/><circle cx="4.1" cy="1" r=".28"/><circle cx="5.6" cy="1" r=".28"/><circle cx="1.85" cy="2.1" r=".28"/><circle cx="3.35" cy="2.1" r=".28"/><circle cx="4.85" cy="2.1" r=".28"/><circle cx="6.35" cy="2.1" r=".28"/><circle cx="1.1" cy="3.2" r=".28"/><circle cx="2.6" cy="3.2" r=".28"/><circle cx="4.1" cy="3.2" r=".28"/><circle cx="5.6" cy="3.2" r=".28"/><circle cx="1.85" cy="4.3" r=".28"/><circle cx="3.35" cy="4.3" r=".28"/><circle cx="4.85" cy="4.3" r=".28"/><circle cx="6.35" cy="4.3" r=".28"/></g></svg>EN</button><button type="button" data-set-lang="es" aria-pressed="false" title="Español"><svg viewBox="0 0 3 2" aria-hidden="true" preserveAspectRatio="none"><rect width="3" height="2" fill="#AA151B"/><rect y=".5" width="3" height="1" fill="#F1BF00"/></svg>ES</button></div>
       <button class="btn" id="themeBtn" type="button" aria-label="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
     </div>
   </div>
@@ -343,14 +339,13 @@ html[lang="es"] [data-lang-es]{display:revert}
   var root=document.documentElement; root.classList.add('js');
   function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
   function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-  var langBtn=document.getElementById('langBtn'), themeBtn=document.getElementById('themeBtn');
-  function applyLang(l){root.lang=l;langBtn.textContent=l==='es'?'EN':'ES';}
-  applyLang(get('lang') || ((navigator.language||'en').toLowerCase().indexOf('es')===0?'es':'en'));
-  langBtn.addEventListener('click',function(){var l=root.lang==='es'?'en':'es';applyLang(l);set('lang',l);});
-  var t=get('theme'); if(t) root.setAttribute('data-theme',t);
+  var themeBtn=document.getElementById('themeBtn'), langBtns=document.querySelectorAll('[data-set-lang]');
+  function applyLang(l){root.lang=l;langBtns.forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-set-lang')===l?'true':'false')});}
+  applyLang(get('pf-lang')==='es'?'es':'en');
+  langBtns.forEach(function(b){b.addEventListener('click',function(){var l=b.getAttribute('data-set-lang');applyLang(l);set('pf-lang',l);});});
+  if(get('pf-theme')==='dark') root.setAttribute('data-theme','dark');
   themeBtn.addEventListener('click',function(){
-    var dark=root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
-    var n=dark?'light':'dark'; root.setAttribute('data-theme',n); set('theme',n);
+    var n=root.getAttribute('data-theme')==='dark'?'light':'dark'; root.setAttribute('data-theme',n); set('pf-theme',n);
   });
   document.getElementById('yr').textContent=new Date().getFullYear();
   var els=document.querySelectorAll('.reveal');
