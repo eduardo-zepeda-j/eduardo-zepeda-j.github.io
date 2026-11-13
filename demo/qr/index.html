@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Docs — Demo</title>
+<meta name="description" content="Interactive demo of QR Docs with sample (fictional) data.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#0c0b1d; --surface:rgba(28,26,60,.72); --solid:#17153a; --text:#f2f1ff; --muted:#a8a5cf; --border:rgba(255,255,255,.1);
+  --orange:#ff7a1a; --pink:#ec4899; --violet:#8b5cf6; --cyan:#22d3ee; --green:#34d399; --amber:#fbbf24;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font:16px/1.6 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background:radial-gradient(900px 500px at 90% -10%,rgba(139,92,246,.35),transparent 60%),radial-gradient(800px 500px at -10% 110%,rgba(255,122,26,.25),transparent 60%),var(--bg);background-attachment:fixed}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:16px}
+.banner{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:.85rem;font-weight:700;padding:8px 14px;border-radius:12px;background:linear-gradient(90deg,rgba(255,122,26,.18),rgba(236,72,153,.18));border:1px solid rgba(255,122,26,.35);text-align:center}
+.top{display:flex;align-items:center;gap:12px;margin:16px 0 8px;flex-wrap:wrap}
+.top .back{font-weight:700;font-size:.9rem;text-decoration:none;padding:8px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--border)}
+.top .spacer{flex:1}
+.btn{border:1px solid var(--border);background:var(--solid);color:var(--text);border-radius:10px;height:36px;padding:0 12px;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+.btn:hover{border-color:var(--orange)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.1;letter-spacing:-.02em;margin:18px 0 6px}
+.gt{background:linear-gradient(120deg,var(--orange),var(--pink) 55%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.mcard{position:relative;padding:18px;border-radius:20px;background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:10px;transition:transform .2s,box-shadow .2s;overflow:hidden}
+.mcard::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c)}
+.mcard:hover{transform:translateY(-4px);box-shadow:0 20px 40px -20px rgba(0,0,0,.7)}
+.qr{background:#fff;border-radius:14px;padding:12px;display:grid;place-items:center;aspect-ratio:1}
+.qr img,.qr canvas{width:100%!important;height:auto!important;image-rendering:pixelated}
+.mname{font-weight:800;font-size:1.05rem;margin:0}
+.meta{color:var(--muted);font-size:.85rem;margin:0}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:800;padding:3px 10px;border-radius:999px;width:max-content}
+.ok{background:rgba(52,211,153,.15);color:var(--green)} .warn{background:rgba(251,191,36,.15);color:var(--amber)}
+.open{margin-top:auto;text-align:center;text-decoration:none;font-weight:800;font-size:.9rem;padding:9px;border-radius:12px;background:var(--c);color:#fff}
+.hero-m{display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center;padding:22px;border-radius:24px;background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(12px);margin-bottom:20px}
+@media (max-width:700px){.hero-m{grid-template-columns:1fr}}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.fact{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+.fact span{display:block;color:var(--muted);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.fact b{font-size:.95rem}
+.docs{display:grid;gap:12px}
+.doc{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--orange);text-decoration:none;cursor:pointer;width:100%;color:var(--text);font:inherit;text-align:left;transition:transform .2s,border-color .2s}
+.doc:hover{transform:translateX(4px);border-color:var(--orange)}
+.doc .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:.75rem;color:#fff;background:linear-gradient(135deg,#ef4444,#ff7a1a);flex:none}
+.doc .ic.img{background:linear-gradient(135deg,#22d3ee,#8b5cf6)}
+.doc b{display:block}
+.doc small{color:var(--muted)}
+.illus{border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#1e1b4b,#312e81);margin-bottom:12px}
+dialog{border:0;border-radius:20px;padding:0;max-width:640px;width:calc(100% - 32px);background:#fff;color:#1a1a2e;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+dialog::backdrop{background:rgba(5,4,20,.7);backdrop-filter:blur(4px)}
+.paper{padding:28px 28px 20px;font-family:Georgia,"Times New Roman",serif}
+.paper h2{font-family:"Plus Jakarta Sans",Arial,sans-serif;margin:0 0 4px;font-size:1.3rem}
+.paper .stamp{display:inline-block;font:800 .72rem "Plus Jakarta Sans",Arial,sans-serif;color:#b91c1c;border:2px solid #b91c1c;border-radius:6px;padding:2px 8px;transform:rotate(-3deg);margin:6px 0 14px}
+.paper ol{padding-left:20px}
+.dlg-foot{display:flex;justify-content:flex-end;padding:0 20px 20px}
+.dlg-foot button{font:700 .9rem "Plus Jakarta Sans",Arial,sans-serif;border:0;border-radius:10px;padding:9px 18px;background:#1a1a2e;color:#fff;cursor:pointer}
+footer{color:var(--muted);font-size:.85rem;text-align:center;padding:28px 0 36px}
+[data-en]{display:none} html[lang="en"] [data-es]{display:none} html[lang="en"] [data-en]{display:revert}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="banner">⚠ <span data-es>DEMO con datos ficticios: empresa, máquinas y documentos son inventados.</span><span data-en>DEMO with fictional data: company, machines and documents are made up.</span></div>
+  <div class="top">
+    <a class="back" href="../../">← <span data-es>Portfolio</span><span data-en>Portfolio</span></a>
+    <a class="back" id="toPanel" href="./" hidden>▦ <span data-es>Panel de máquinas</span><span data-en>Machine panel</span></a>
+    <span class="spacer"></span>
+    <button class="btn" id="langBtn" type="button">EN</button>
+  </div>
+  <main id="app"></main>
+  <footer>QR Docs · <span data-es>demo de</span><span data-en>demo by</span> <a href="https://github.com/eduardo-zepeda-j/qr_app">Eduardo Zepeda</a></footer>
+</div>
+
+<dialog id="dlg"><div class="paper" id="paper"></div><div class="dlg-foot"><button type="button" onclick="document.getElementById('dlg').close()"><span data-es>Cerrar</span><span data-en>Close</span></button></div></dialog>
+
+<script>
+const COMPANY = "Alimentos del Valle S.A. (ficticia)";
+const PLANT = { es: "Planta Demo · Línea de empaque 2", en: "Demo Plant · Packaging line 2" };
+const COLORS = ["linear-gradient(135deg,#ff7a1a,#ec4899)","linear-gradient(135deg,#8b5cf6,#22d3ee)","linear-gradient(135deg,#34d399,#22d3ee)","linear-gradient(135deg,#fbbf24,#ff7a1a)","linear-gradient(135deg,#ec4899,#8b5cf6)"];
+const MACHINES = [
+  { id:"aura-x5", name:"Aura-X5", type:{es:"Envasadora vertical",en:"Vertical bagger"}, area:{es:"Empaque",en:"Packaging"}, serial:"AX5-2023-0147", status:"ok", last:"2026-10-28", next:"2026-12-15", tech:"Técnico Demo A" },
+  { id:"swiftpick-v3", name:"SwiftPick-V3", type:{es:"Robot pick & place",en:"Pick & place robot"}, area:{es:"Paletizado",en:"Palletizing"}, serial:"SPV3-2024-0032", status:"warn", last:"2026-08-02", next:"2026-11-20", tech:"Técnico Demo B" },
+  { id:"titan-mini", name:"Titan-Mini", type:{es:"Mezcladora industrial",en:"Industrial mixer"}, area:{es:"Preparación",en:"Preparation"}, serial:"TM-2022-0981", status:"ok", last:"2026-10-10", next:"2027-01-10", tech:"Técnico Demo A" },
+  { id:"cereal-dry-2000", name:"Cereal-Dry-2000", type:{es:"Secadora de cereal",en:"Cereal dryer"}, area:{es:"Proceso térmico",en:"Thermal process"}, serial:"CD2K-2021-0215", status:"ok", last:"2026-09-30", next:"2026-12-30", tech:"Técnico Demo C" },
+  { id:"form-logic-pro", name:"Form-Logic-Pro", type:{es:"Formadora de cajas",en:"Case erector"}, area:{es:"Empaque secundario",en:"Secondary packaging"}, serial:"FLP-2025-0008", status:"warn", last:"2026-07-18", next:"2026-11-18", tech:"Técnico Demo B" }
+];
+const DOCS = [
+  { key:"manual", es:"Manual de operación", en:"Operating manual", pages:42 },
+  { key:"specs", es:"Especificaciones técnicas", en:"Technical specifications", pages:8 },
+  { key:"care", es:"Cuidados y mantenimiento preventivo", en:"Care and preventive maintenance", pages:15 },
+  { key:"assembly", es:"Guía de ensamble", en:"Assembly guide", pages:23 },
+  { key:"photo", es:"Diagrama de la máquina", en:"Machine diagram", pages:0, img:true }
+];
+const STEPS = {
+  manual:{es:["Verifique que el área esté despejada y las guardas cerradas.","Encienda el interruptor principal y espere la autoprueba (30 s).","Seleccione la receta en la pantalla HMI.","Presione INICIO y supervise los primeros 10 ciclos."],en:["Check the area is clear and all guards are closed.","Turn on the main switch and wait for the self-test (30 s).","Select the recipe on the HMI screen.","Press START and monitor the first 10 cycles."]},
+  specs:{es:["Alimentación: 220 V trifásico, 60 Hz.","Consumo nominal: 4.5 kW.","Presión neumática: 6 bar.","Capacidad: 60 ciclos por minuto."],en:["Power: 220 V three-phase, 60 Hz.","Rated power: 4.5 kW.","Pneumatic pressure: 6 bar.","Capacity: 60 cycles per minute."]},
+  care:{es:["Diario: limpieza de superficies de contacto.","Semanal: revisión de bandas y sensores.","Mensual: lubricación de rodamientos.","Trimestral: calibración de básculas."],en:["Daily: clean product-contact surfaces.","Weekly: inspect belts and sensors.","Monthly: lubricate bearings.","Quarterly: calibrate scales."]},
+  assembly:{es:["Nivele la base con las patas ajustables.","Monte el módulo superior con 8 pernos M10.","Conecte el arnés eléctrico al tablero.","Ejecute la prueba en vacío antes de producir."],en:["Level the base with the adjustable feet.","Mount the top module with 8 M10 bolts.","Connect the wiring harness to the panel.","Run a dry test before production."]}
+};
+const T = {
+  es:{panel:"Panel de máquinas", panelSub:"Escanea un código con tu celular o haz clic en «Abrir» para ver la página que vería un operador.", open:"Abrir documentos", ok:"Operativa", warn:"Mantenimiento próximo", docs:"Documentos y recursos", serial:"N.º de serie", area:"Área", last:"Último mantenimiento", next:"Próximo mantenimiento", tech:"Responsable", pages:"páginas", pdf:"PDF", view:"Vista previa", notFound:"Máquina no encontrada", notFoundSub:"El código QR no corresponde a ninguna máquina de la demo.", scan:"Escanea para abrir en tu celular", fake:"DOCUMENTO FICTICIO · SOLO DEMO"},
+  en:{panel:"Machine panel", panelSub:"Scan a code with your phone or click “Open” to see the page an operator would see.", open:"Open documents", ok:"Running", warn:"Maintenance due", docs:"Documents and resources", serial:"Serial no.", area:"Area", last:"Last maintenance", next:"Next maintenance", tech:"Owner", pages:"pages", pdf:"PDF", view:"Preview", notFound:"Machine not found", notFoundSub:"This QR code doesn't match any demo machine.", scan:"Scan to open on your phone", fake:"FICTIONAL DOCUMENT · DEMO ONLY"}
+};
+const root=document.documentElement, app=document.getElementById('app');
+function getL(){try{return localStorage.getItem('lang')}catch(e){return null}}
+function setL(v){try{localStorage.setItem('lang',v)}catch(e){}}
+let lang = getL() || ((navigator.language||'es').toLowerCase().startsWith('es')?'es':'en');
+const params=new URLSearchParams(location.search), id=params.get('id');
+const baseUrl=location.origin+location.pathname;
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function qr(el,text,size){ if(window.QRCode){ new QRCode(el,{text,width:size,height:size,colorDark:"#14122b",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M}); } else { el.textContent="QR"; } }
+function diagram(m){return `<svg viewBox="0 0 400 200" width="100%" role="img" aria-label="${esc(m.name)}"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#ff7a1a"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><rect x="40" y="60" width="200" height="100" rx="12" fill="none" stroke="url(#g)" stroke-width="4"/><rect x="250" y="90" width="110" height="40" rx="8" fill="none" stroke="#22d3ee" stroke-width="3"/><circle cx="90" cy="170" r="12" fill="#8b5cf6"/><circle cx="190" cy="170" r="12" fill="#8b5cf6"/><rect x="70" y="30" width="70" height="30" rx="6" fill="none" stroke="#fbbf24" stroke-width="3"/><text x="140" y="117" text-anchor="middle" fill="#f2f1ff" font-family="Arial" font-size="18" font-weight="700">${esc(m.name)}</text><text x="305" y="115" text-anchor="middle" fill="#22d3ee" font-family="Arial" font-size="12">HMI</text></svg>`}
+
+function render(){
+  root.lang=lang; document.getElementById('langBtn').textContent=lang==='es'?'EN':'ES';
+  const t=T[lang];
+  if(!id){
+    document.title="QR Docs — "+t.panel;
+    app.innerHTML=`<h1><span class="gt">${t.panel}</span></h1><p class="sub">${esc(COMPANY)} · ${PLANT[lang]}<br>${t.panelSub}</p><div class="grid" id="grid"></div>`;
+    const grid=document.getElementById('grid');
+    MACHINES.forEach((m,i)=>{
+      const c=document.createElement('article'); c.className='mcard'; c.style.setProperty('--c',COLORS[i%COLORS.length]);
+      c.innerHTML=`<div class="qr" aria-label="QR"></div><p class="mname">${esc(m.name)}</p><p class="meta">${esc(m.type[lang])} · ${esc(m.area[lang])}</p><span class="status ${m.status}">● ${t[m.status]}</span><a class="open" href="?id=${m.id}">${t.open} →</a>`;
+      grid.appendChild(c); qr(c.querySelector('.qr'), baseUrl+"?id="+m.id, 220);
+    });
+    document.getElementById('toPanel').hidden=true; return;
+  }
+  document.getElementById('toPanel').hidden=false;
+  const m=MACHINES.find(x=>x.id===id);
+  if(!m){ document.title=t.notFound; app.innerHTML=`<h1>${t.notFound}</h1><p class="sub">${t.notFoundSub}</p>`; return; }
+  document.title=m.name+" — "+t.docs;
+  app.innerHTML=`<div class="hero-m"><div><span class="status ${m.status}">● ${t[m.status]}</span><h1><span class="gt">${esc(m.name)}</span></h1><p class="sub" style="margin:0">${esc(m.type[lang])} · ${esc(COMPANY)}</p>
+    <div class="facts"><div class="fact"><span>${t.serial}</span><b>${m.serial}</b></div><div class="fact"><span>${t.area}</span><b>${esc(m.area[lang])}</b></div><div class="fact"><span>${t.last}</span><b>${m.last}</b></div><div class="fact"><span>${t.next}</span><b>${m.next}</b></div><div class="fact"><span>${t.tech}</span><b>${esc(m.tech)}</b></div></div></div>
+    <div><div class="qr" id="mqr"></div><p class="meta" style="text-align:center;margin-top:8px">${t.scan}</p></div></div>
+    <h2 style="margin:6px 0 14px">${t.docs}</h2><div class="docs" id="docs"></div>`;
+  qr(document.getElementById('mqr'), baseUrl+"?id="+m.id, 200);
+  const docs=document.getElementById('docs');
+  DOCS.forEach(d=>{
+    const b=document.createElement('button'); b.type='button'; b.className='doc';
+    const file=(m.name+"_"+d.en.replace(/ /g,'_'))+(d.img?".png":".pdf");
+    b.innerHTML=`<span class="ic ${d.img?'img':''}">${d.img?'IMG':t.pdf}</span><span><b>${d[lang]}</b><small>${esc(file)}${d.pages?` · ${d.pages} ${t.pages}`:''}</small></span>`;
+    b.addEventListener('click',()=>openDoc(m,d,file)); docs.appendChild(b);
+  });
+}
+function openDoc(m,d,file){
+  const t=T[lang], p=document.getElementById('paper');
+  if(d.img){ p.innerHTML=`<h2>${esc(m.name)} — ${d[lang]}</h2><div class="stamp">${t.fake}</div><div class="illus">${diagram(m)}</div><p style="font-size:.85rem;color:#555">${esc(file)}</p>`; }
+  else { const steps=(STEPS[d.key]||STEPS.manual)[lang].map(s=>`<li>${esc(s)}</li>`).join('');
+    p.innerHTML=`<h2>${esc(m.name)} — ${d[lang]}</h2><div class="stamp">${t.fake}</div><p><b>${t.serial}:</b> ${m.serial} · <b>${t.area}:</b> ${esc(m.area[lang])}</p><ol>${steps}</ol><p style="font-size:.85rem;color:#555">${esc(file)} · ${d.pages} ${t.pages}</p>`; }
+  const dlg=document.getElementById('dlg'); if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+}
+document.getElementById('langBtn').addEventListener('click',()=>{lang=lang==='es'?'en':'es';setL(lang);render();});
+render();
+</script>
+</body>
+</html>
