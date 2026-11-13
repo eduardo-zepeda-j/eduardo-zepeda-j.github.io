@@ -77,19 +77,32 @@ h1{font-size:clamp(2.4rem,7vw,4.4rem);line-height:1.02;letter-spacing:-.03em;mar
 .photo{position:relative;justify-self:center}
 .ring{width:min(320px,70vw);aspect-ratio:1;border-radius:50%;padding:6px;background:conic-gradient(from 180deg,#4f46e5,#06b6d4,#10b981,#f59e0b,#ec4899,#7c3aed,#4f46e5);box-shadow:0 30px 60px -20px rgba(124,58,237,.55)}
 .ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:6px solid var(--bg);display:block}
-.float-tag{position:absolute;display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:800;padding:7px 12px 7px 9px;border-radius:12px;background:#fff;color:#14122b;border:1px solid rgba(20,18,43,.08);box-shadow:0 10px 24px -10px rgba(20,18,43,.45);white-space:nowrap;animation:bob 6s ease-in-out infinite}
+.orbit{position:absolute;inset:-5%;pointer-events:none}
+.arm{position:absolute;inset:0;transform:rotate(var(--a));animation:spin 60s linear infinite}
+.sat{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);animation:orbit-in 1.4s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(.15s + var(--i)*.12s)}
+.float-tag{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:800;padding:7px 12px 7px 9px;border-radius:12px;background:#fff;color:#14122b;border:1px solid rgba(20,18,43,.08);box-shadow:0 10px 24px -10px rgba(20,18,43,.45);white-space:nowrap;pointer-events:auto;transform:rotate(calc(-1*var(--a)));animation:counter 60s linear infinite}
 .float-tag img{width:20px;height:20px;object-fit:contain;flex:none}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@media (prefers-reduced-motion: reduce){.float-tag{animation:none}}
-.t1{top:6%;left:-10%} .t2{top:-3%;right:-4%;animation-delay:-1s}
-.t3{top:40%;right:-20%;animation-delay:-2s} .t4{bottom:8%;right:-12%;animation-delay:-3s}
-.t5{bottom:-5%;left:6%;animation-delay:-4s} .t6{bottom:30%;left:-14%;animation-delay:-5s}
-@media (max-width:820px){.float-tag{font-size:.72rem;padding:5px 9px 5px 7px}.float-tag img{width:16px;height:16px}.t1{left:-8%}.t3{right:-10%}.t4{right:-6%}.t6{left:-10%}}
+.photo:hover .arm,.photo:hover .float-tag{animation-play-state:paused}
+@keyframes spin{from{transform:rotate(var(--a))}to{transform:rotate(calc(var(--a) + 360deg))}}
+@keyframes counter{from{transform:rotate(calc(-1*var(--a)))}to{transform:rotate(calc(-1*var(--a) - 360deg))}}
+@keyframes orbit-in{from{top:50%;opacity:0;scale:.35}to{top:0;opacity:1;scale:1}}
+.ring{animation:ring-in 1s cubic-bezier(.22,1,.36,1) both}
+@keyframes ring-in{from{opacity:0;scale:.92}to{opacity:1;scale:1}}
+@media (max-width:820px){.ring{width:min(300px,58vw)}.float-tag{font-size:.72rem;padding:5px 9px 5px 7px}.float-tag img{width:16px;height:16px}.photo{margin:30px 0 20px}}
+@media (prefers-reduced-motion: reduce){.arm,.float-tag,.sat,.ring{animation:none}}
 
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 @media (max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
 .stat{padding:18px;border-radius:18px;background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(10px)}
-.stat b{display:block;font-size:1.8rem;line-height:1.1;font-weight:800}
+.stat b{display:block;font-size:1.8rem;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+.js .stats .stat{opacity:0;transform:translateY(18px) scale(.97);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i)*.12s)}
+.js .stats.in .stat{opacity:1;transform:none}
+.js .stats .stat span{display:block;opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease;transition-delay:calc(.45s + var(--i)*.12s)}
+.js .stats.in .stat span{opacity:1;transform:none}
+html:not([lang="es"]) .stats [data-lang-es],html[lang="es"] .stats [data-lang-en]{display:none}
+.caret::after{content:"";display:inline-block;width:2px;height:.9em;margin-left:3px;background:currentColor;vertical-align:-.05em;animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.js .stats .stat,.js .stats .stat span{opacity:1;transform:none;transition:none}}
 .stat span{color:var(--muted);font-size:.88rem;font-weight:600}
 .s1 b{color:var(--indigo)} .s2 b{color:var(--pink)} .s3 b{color:var(--cyan)} .s4 b{color:var(--amber)}
 
@@ -190,20 +203,22 @@ html[lang="es"] [data-lang-es]{display:revert}
     </div>
     <div class="photo">
       <div class="ring"><img src="assets/img/avatar.jpg" alt="Eduardo Zepeda" width="320" height="320"></div>
-      <span class="float-tag t1"><img src="assets/icons/linux.svg" alt="" width="20" height="20">Linux</span>
-      <span class="float-tag t2"><img src="assets/icons/aws.svg" alt="" width="20" height="20">AWS</span>
-      <span class="float-tag t3"><img src="assets/icons/python.svg" alt="" width="20" height="20">Python</span>
-      <span class="float-tag t4"><img src="assets/icons/rust.svg" alt="" width="20" height="20">Rust</span>
-      <span class="float-tag t5"><img src="assets/icons/obs.svg" alt="" width="20" height="20">OBS Studio</span>
-      <span class="float-tag t6"><img src="assets/icons/davinci-resolve.svg" alt="" width="20" height="20">DaVinci Resolve</span>
+      <div class="orbit" aria-label="Linux, DaVinci Resolve, AWS, OBS Studio, Python, Rust">
+        <div class="arm" style="--a:300deg"><div class="sat" style="--i:0"><span class="float-tag"><img src="assets/icons/linux.svg" alt="" width="20" height="20">Linux</span></div></div>
+        <div class="arm" style="--a:240deg"><div class="sat" style="--i:1"><span class="float-tag"><img src="assets/icons/davinci-resolve.svg" alt="" width="20" height="20">DaVinci Resolve</span></div></div>
+        <div class="arm" style="--a:0deg"><div class="sat" style="--i:2"><span class="float-tag"><img src="assets/icons/aws.svg" alt="" width="20" height="20">AWS</span></div></div>
+        <div class="arm" style="--a:180deg"><div class="sat" style="--i:3"><span class="float-tag"><img src="assets/icons/obs.svg" alt="" width="20" height="20">OBS Studio</span></div></div>
+        <div class="arm" style="--a:60deg"><div class="sat" style="--i:4"><span class="float-tag"><img src="assets/icons/python.svg" alt="" width="20" height="20">Python</span></div></div>
+        <div class="arm" style="--a:120deg"><div class="sat" style="--i:5"><span class="float-tag"><img src="assets/icons/rust.svg" alt="" width="20" height="20">Rust</span></div></div>
+      </div>
     </div>
   </section>
 
   <div class="stats reveal">
-    <div class="stat s1"><b>10+</b><span data-lang-en>years in IT</span><span data-lang-es>años en TI</span></div>
-    <div class="stat s2"><b>6.7K+</b><span data-lang-en>views on lessons</span><span data-lang-es>vistas en clases</span></div>
-    <div class="stat s3"><b>6</b><span data-lang-en>open-source projects</span><span data-lang-es>proyectos open source</span></div>
-    <div class="stat s4"><b>EN · ES</b><span data-lang-en>B2 English · native Spanish</span><span data-lang-es>Inglés B2 · español nativo</span></div>
+    <div class="stat s1" style="--i:0"><b data-count="10" data-suffix="+">10+</b><span data-lang-en>years in IT</span><span data-lang-es>años en TI</span></div>
+    <div class="stat s2" style="--i:1"><b data-count="6.7" data-dec="1" data-suffix="K+">6.7K+</b><span data-lang-en>views on lessons</span><span data-lang-es>vistas en clases</span></div>
+    <div class="stat s3" style="--i:2"><b data-count="6">6</b><span data-lang-en>open-source projects</span><span data-lang-es>proyectos open source</span></div>
+    <div class="stat s4" style="--i:3"><b data-type="EN · ES">EN · ES</b><span data-lang-en>B2 English · native Spanish</span><span data-lang-es>Inglés B2 · español nativo</span></div>
   </div>
 
   <section id="projects" class="reveal">
@@ -350,9 +365,22 @@ html[lang="es"] [data-lang-es]{display:revert}
     var n=root.getAttribute('data-theme')==='dark'?'light':'dark'; root.setAttribute('data-theme',n); set('pf-theme',n);
   });
   document.getElementById('yr').textContent=new Date().getFullYear();
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animateStats(box){
+    if(still) return;
+    box.querySelectorAll('[data-count]').forEach(function(b,i){
+      var to=parseFloat(b.dataset.count),dec=+(b.dataset.dec||0),suf=b.dataset.suffix||'',dur=1600,delay=150+i*120;
+      b.textContent=(0).toFixed(dec)+suf;
+      setTimeout(function(){var t0=Date.now(),id=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/dur),e=1-Math.pow(1-k,3);b.textContent=(to*e).toFixed(dec)+suf;if(k>=1)clearInterval(id);},30);},delay);
+    });
+    box.querySelectorAll('[data-type]').forEach(function(b){
+      var txt=b.dataset.type,n=0;b.textContent='';b.classList.add('caret');
+      setTimeout(function tick(){b.textContent=txt.slice(0,++n);if(n<txt.length)setTimeout(tick,110);else setTimeout(function(){b.classList.remove('caret')},900);},550);
+    });
+  }
   var els=document.querySelectorAll('.reveal');
   if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.08});
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');if(e.target.classList.contains('stats'))animateStats(e.target);io.unobserve(e.target);}})},{threshold:.08});
     els.forEach(function(el){io.observe(el)});
   } else els.forEach(function(el){el.classList.add('in')});
 })();
